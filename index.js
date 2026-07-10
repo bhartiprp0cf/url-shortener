@@ -3,6 +3,8 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require("cookie-parser");
 const { connectToMongoDB } = require("./connect");
+
+const {restrictToLoggedInUserOnly} = require('./middlewares/auth');
 const URL = require("./models/url");
 
 const staticRoutes = require('./routes/staticRouter');
@@ -22,12 +24,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
-app.use("/url", urlRoute);
+app.use("/url", restrictToLoggedInUserOnly, urlRoute);
 app.use("/", staticRoutes);
 app.use("/user", userRoutes);
 
 
-app.get("/:shortId", async (req, res) => {
+app.get("/url/:shortId", async (req, res) => {
     const shortId = req.params.shortId;
     const entry = await URL.findOneAndUpdate({
         shortId,
@@ -40,6 +42,10 @@ app.get("/:shortId", async (req, res) => {
             },
         }
     );
+
+    if (!entry) {
+        return res.status(404).send("Short URL not found");
+    }
 
     res.redirect(entry.redirectURL);
 });
