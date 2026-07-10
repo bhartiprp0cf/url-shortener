@@ -5,7 +5,7 @@ A URL shortening application built using Node.js, Express.js, MongoDB, and EJS.
 ## Features
 - ✅ Generate short URLs
 - ✅ Redirect to original URLs
-- ⏳ User authentication (Coming Soon)
+- ✅ User authentication
 - ✅ Click analytics
 
 ## Tech Stack
